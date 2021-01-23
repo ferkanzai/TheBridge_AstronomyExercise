@@ -1,0 +1,25 @@
+{
+  "name": "exercise-astronomy-mongodb-16-01-2021",
+  "version": "1.0.0",
+  "description": "## Antes de empezar",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "helmet": "^4.3.1",
+    "mongoose": "^5.11.12",
+    "mongoose-sequence": "^5.3.1",
+    "morgan": "^1.10.0",
+    "node-fetch": "^2.6.1",
+    "passport": "^0.4.1"
+  }
+}
