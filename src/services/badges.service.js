@@ -1,4 +1,6 @@
-const UserModel = require('../models/User');
+// const require('../models/User') = require('../models/User');
+
+const { createError } = require('../utils');
 
 class BadgesService {
   constructor() {
@@ -8,10 +10,12 @@ class BadgesService {
     this.FIVE_OBJECTS = 'Road to NE-lhalla!';
     this.TEN_OBJECTS = 'Master of universe!';
     this.ALL_BADGES = 'The best astronomer!';
+
+    // llamar al modelo aquí
   }
 
   getUser = async (affiliatedNumber) => {
-    return await UserModel.findOne({ affiliatedNumber });
+    return await require('../models/User').findOne({ affiliatedNumber });
   };
 
   getUserNeas = async (affiliatedNumber) => {
@@ -62,17 +66,17 @@ class BadgesService {
   };
 
   updateNeas = (neas, neaName) => {
-    if (!neas.includes(neaName)) {
-      return [...neas, neaName];
+    if (neas.includes(neaName)) {
+      createError('Nea already discovered', 409);
     }
-    return neas;
+    return [...neas, neaName];
   };
 
   updateNecs = (necs, necName) => {
-    if (!necs.includes(necName)) {
-      return [...necs, necName];
+    if (necs.includes(necName)) {
+      createError('Nec already discovered', 409);
     }
-    return necs;
+    return [...necs, necName];
   };
 
   updateBadges = (badges, badgeName) =>
@@ -81,8 +85,11 @@ class BadgesService {
       given: badge.given || badge.name === badgeName,
     }));
 
-  updatePoints = async (affiliatedNumber, points) => {
-    await UserModel.findByIdAndUpdate(affiliatedNumber, { astronomicalPoints: points });
+  updatePoints  = async (affiliatedNumber, points) => {
+    await require('../models/User').updateOne(
+      { affiliatedNumber },
+      { astronomicalPoints: points }
+    );
   };
 
   isGiven = async (affiliatedNumber, badgeName) => {
@@ -108,31 +115,32 @@ class BadgesService {
       newBadges = this.updateBadges(newBadges, this.FIRST_NEA);
     }
 
-    if (
-      (await this.moreThanXObjectsDiscovered(affiliatedNumber, 5)) &&
-      !(await this.isGiven(affiliatedNumber, this.FIVE_OBJECTS))
-    ) {
-      badgePoints += await this.getBadgePoints(affiliatedNumber, this.FIVE_OBJECTS);
-      newBadges = this.updateBadges(newBadges, this.FIVE_OBJECTS);
-    }
+    // if (
+    //   (await this.moreThanXObjectsDiscovered(affiliatedNumber, 5)) &&
+    //   !(await this.isGiven(affiliatedNumber, this.FIVE_OBJECTS))
+    // ) {
+    //   badgePoints += await this.getBadgePoints(affiliatedNumber, this.FIVE_OBJECTS);
+    //   newBadges = this.updateBadges(newBadges, this.FIVE_OBJECTS);
+    // }
 
-    if (
-      (await this.moreThanXObjectsDiscovered(affiliatedNumber, 10)) &&
-      !(await this.isGiven(affiliatedNumber, this.TEN_OBJECTS))
-    ) {
-      badgePoints += await this.getBadgePoints(affiliatedNumber, this.TEN_OBJECTS);
-      newBadges = this.updateBadges(newBadges, this.TEN_OBJECTS);
-    }
+    // if (
+    //   (await this.moreThanXObjectsDiscovered(affiliatedNumber, 10)) &&
+    //   !(await this.isGiven(affiliatedNumber, this.TEN_OBJECTS))
+    // ) {
+    //   badgePoints += await this.getBadgePoints(affiliatedNumber, this.TEN_OBJECTS);
+    //   newBadges = this.updateBadges(newBadges, this.TEN_OBJECTS);
+    // }
 
-    if (
-      !(await this.isGiven(affiliatedNumber, this.ALL_BADGES)) &&
-      (await this.giveLastBadge(affiliatedNumber))
-    ) {
-      badgePoints += await this.getBadgePoints(affiliatedNumber, this.ALL_BADGES);
-      newBadges = this.updateBadges(newBadges, this.ALL_BADGES);
-    }
+    // if (
+    //   !(await this.isGiven(affiliatedNumber, this.ALL_BADGES)) &&
+    //   (await this.giveLastBadge(affiliatedNumber))
+    // ) {
+    //   badgePoints += await this.getBadgePoints(affiliatedNumber, this.ALL_BADGES);
+    //   newBadges = this.updateBadges(newBadges, this.ALL_BADGES);
+    // }
 
-    const result = await UserModel.findOneAndUpdate(
+    
+    const result = await require('../models/User').findOneAndUpdate(
       { affiliatedNumber },
       {
         badges: newBadges,
@@ -141,7 +149,9 @@ class BadgesService {
       },
       { new: true }
     );
-
+    
+    // console.log(result)
+      
     return result;
   };
 
@@ -160,31 +170,31 @@ class BadgesService {
       newBadges = this.updateBadges(newBadges, this.FIRST_NEC);
     }
 
-    if (
-      (await this.moreThanXObjectsDiscovered(affiliatedNumber, 5)) &&
-      !(await this.isGiven(affiliatedNumber, this.FIVE_OBJECTS))
-    ) {
-      badgePoints += await this.getBadgePoints(affiliatedNumber, this.FIVE_OBJECTS);
-      newBadges = this.updateBadges(newBadges, this.FIVE_OBJECTS);
-    }
+    // if (
+    //   (await this.moreThanXObjectsDiscovered(affiliatedNumber, 5)) &&
+    //   !(await this.isGiven(affiliatedNumber, this.FIVE_OBJECTS))
+    // ) {
+    //   badgePoints += await this.getBadgePoints(affiliatedNumber, this.FIVE_OBJECTS);
+    //   newBadges = this.updateBadges(newBadges, this.FIVE_OBJECTS);
+    // }
 
-    if (
-      (await this.moreThanXObjectsDiscovered(affiliatedNumber, 10)) &&
-      !(await this.isGiven(affiliatedNumber, this.TEN_OBJECTS))
-    ) {
-      badgePoints += await this.getBadgePoints(affiliatedNumber, this.TEN_OBJECTS);
-      newBadges = this.updateBadges(newBadges, this.TEN_OBJECTS);
-    }
+    // if (
+    //   (await this.moreThanXObjectsDiscovered(affiliatedNumber, 10)) &&
+    //   !(await this.isGiven(affiliatedNumber, this.TEN_OBJECTS))
+    // ) {
+    //   badgePoints += await this.getBadgePoints(affiliatedNumber, this.TEN_OBJECTS);
+    //   newBadges = this.updateBadges(newBadges, this.TEN_OBJECTS);
+    // }
 
-    if (
-      !(await this.isGiven(affiliatedNumber, this.ALL_BADGES)) &&
-      (await this.giveLastBadge(affiliatedNumber))
-    ) {
-      badgePoints += await this.getBadgePoints(affiliatedNumber, this.ALL_BADGES);
-      newBadges = this.updateBadges(newBadges, this.ALL_BADGES);
-    }
+    // if (
+    //   !(await this.isGiven(affiliatedNumber, this.ALL_BADGES)) &&
+    //   (await this.giveLastBadge(affiliatedNumber))
+    // ) {
+    //   badgePoints += await this.getBadgePoints(affiliatedNumber, this.ALL_BADGES);
+    //   newBadges = this.updateBadges(newBadges, this.ALL_BADGES);
+    // }
 
-    const result = await UserModel.findOneAndUpdate(
+    const result = await require('../models/User').updateOne(
       { affiliatedNumber },
       {
         badges: newBadges,

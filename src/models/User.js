@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 const { Schema } = mongoose;
+const BadgesService = require('../services/badges.service');
 
 const UserSchema = new Schema({
   name: {
@@ -77,6 +78,49 @@ const UserSchema = new Schema({
     of: String,
     default: [],
   },
+});
+
+UserSchema.post('updateOne', async function (error, res, next) {
+  console.log(this)
+  console.log(res);
+  // if (
+  //   (await BadgesService.moreThanXObjectsDiscovered(this.affiliatedNumber, 5)) &&
+  //   !(await BadgesService.isGiven(this.affiliatedNumber, BadgesService.FIVE_OBJECTS))
+  // ) {
+  //   console.log(true);
+  //   this.badgePoints += await BadgesService.getBadgePoints(
+  //     affiliatedNumber,
+  //     BadgesService.FIVE_OBJECTS
+  //   );
+  //   this.astronomicalPoints += this.badgePoints;
+  //   this.badges = BadgesService.updateBadges(badges, BadgesService.FIVE_OBJECTS);
+  // }
+
+  // if (
+  //   (await BadgesService.moreThanXObjectsDiscovered(this.affiliatedNumber, 10)) &&
+  //   !(await BadgesService.isGiven(this.affiliatedNumber, BadgesService.TEN_OBJECTS))
+  // ) {
+  //   this.badgePoints += await BadgesService.getBadgePoints(
+  //     this.affiliatedNumber,
+  //     BadgesService.TEN_OBJECTS
+  //   );
+  //   this.astronomicalPoints += this.badgePoints;
+  //   this.badges = BadgesService.updateBadges(this.badges, BadgesService.TEN_OBJECTS);
+  // }
+
+  // if (
+  //   !(await BadgesService.isGiven(this.affiliatedNumber, BadgesService.ALL_BADGES)) &&
+  //   (await BadgesService.giveLastBadge(this.affiliatedNumber))
+  // ) {
+  //   this.badgePoints += await BadgesService.getBadgePoints(
+  //     this.affiliatedNumber,
+  //     BadgesService.ALL_BADGES
+  //   );
+  //   this.astronomicalPoints += this.badgePoints;
+  //   this.badges = BadgesService.updateBadges(this.badges, BadgesService.ALL_BADGES);
+  // }
+
+  next();
 });
 
 UserSchema.plugin(AutoIncrement, { inc_field: 'affiliatedNumber' });
